@@ -19,7 +19,6 @@ const init = async () => {
             // 从链接里获得请求参数
             // const url = 'https://www.youtube.com/watch?v=WhXefyLs-uw';
             const id = request.query.v;
-            const requestRange = request.headers.range;
             try {
                 // 请求视频内容
                 const video = ytdl(id, { highWaterMark: 1 << 25 });
@@ -30,6 +29,7 @@ const init = async () => {
                         res(total);
                     })
                 }).then(totalLength => {
+                    const requestRange = request.headers.range || 'bytes=0-1024';
                     let range = Ammo.header(requestRange, totalLength)[0]
                     console.log('range:', range)
                     const start = range.from;
@@ -76,7 +76,7 @@ const init = async () => {
                         rej('Opoos')
                     }
                 }).then(totalLength => {
-                    const requestRange = request.headers.range;
+                    const requestRange = request.headers.range || 'bytes=0-1024';
                     let range = Ammo.header(requestRange, totalLength)[0]
                     console.log('range', range);
                     const start = range.from;
