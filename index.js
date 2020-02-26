@@ -31,7 +31,6 @@ const init = async () => {
                 }).then(totalLength => {
                     const requestRange = request.headers.range || 'bytes=0-1024';
                     let range = Ammo.header(requestRange, totalLength)[0]
-                    console.log('range:', range)
                     const start = range.from;
                     const end = range.to;
                     const stream = new Ammo.Clip(range)
@@ -61,7 +60,7 @@ const init = async () => {
             // const url = 'https://www.youtube.com/watch?v=WhXefyLs-uw';
             const query = request.query;
             const id = query.a || query.v;
-            const hdQuality = id === query.a ? "highestaudio" : "highestvideo";
+            const hdQuality = id === query.a ? "highestaudio" : 137;
             const ContentType = id == query.a ? 'audio/mp3' : 'video/mp4';
             try {
                 // 请求媒体内容
@@ -78,7 +77,6 @@ const init = async () => {
                 }).then(totalLength => {
                     const requestRange = request.headers.range || 'bytes=0-1024';
                     let range = Ammo.header(requestRange, totalLength)[0]
-                    console.log('range', range);
                     const start = range.from;
                     const end = range.to;
                     const stream = new Ammo.Clip(range)
