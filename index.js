@@ -72,42 +72,37 @@ const init = async () => {
             const id = query.a || query.v;
             const hdQuality = id === query.a ? "highestaudio" : "highestvideo";
             const ContentType = id == query.a ? 'audio/mp3' : 'video/mp4';
-            const requestRange = request.headers.range;
             try {
-                // 请求视频内容
-                const media = ytdl(id, { highWaterMark: 1 << 25, quality: hdQuality });
-                // 返回视频流
-                if (requestRange) {
-                    const p = new Promise((res, rej) => {
-                        try {
-                            media.once('progress', (chunkLength, downloaded, total) => {
-                                res(total);
-                            })
-                        } catch (e) {
-                            rej('Opoos')
-                        }
-                    }).then(totalLength => {
-                        let range = Ammo.header(requestRange, totalLength)[0]
-                        console.log('range:', range)
-                        const start = range.from;
-                        const end = range.to;
-                        const stream = new Ammo.Clip(range)
-                        media.pipe(stream)
-                        return h
-                            .response(stream)
-                            .code(206)
-                            .header('Content-Range', 'bytes ' + start + '-' + end + '/' + totalLength)
-                            .header('Content-Length', start == end ? 0 : (end - start + 1))
-                            .header('Content-Type', ContentType)
-                            .header('Accept-Ranges', 'bytes')
-                    }).catch(e => { return e; })
-
-                    return p;
-                } else {
+                // 请求媒体内容
+                const media = ytdl(id, { quality: hdQuality });
+                // 返回媒体流                
+                const p = new Promise((res, rej) => {
+                    try {
+                        media.once('progress', (chunkLength, downloaded, total) => {
+                            res(total);
+                        })
+                    } catch (e) {
+                        rej('Opoos')
+                    }
+                }).then(totalLength => {
+                    const requestRange = request.headers.range || 'bytes=1-1024000';
+                    let range = Ammo.header(requestRange, totalLength)[0]
+                    console.log('range',range);
+                    const start = range.from;
+                    const end = range.to;
+                    const stream = new Ammo.Clip(range)
+                    media.pipe(stream)
                     return h
-                        .response(media)
+                        .response(stream)
+                        .code(206)
+                        .header('Content-Range', 'bytes ' + start + '-' + end + '/' + totalLength)
+                        .header('Content-Length', start == end ? 0 : (end - start + 1))
                         .header('Content-Type', ContentType)
-                }
+                        .header('Accept-Ranges', 'bytes')
+                }).catch(e => { return e; })
+
+                return p;
+
             } catch (e) {
                 return 'Opoos Something went wrong';
             }
