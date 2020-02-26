@@ -65,7 +65,7 @@ const init = async () => {
             const ContentType = id == query.a ? 'audio/mp3' : 'video/mp4';
             try {
                 // 请求媒体内容
-                const media = ytdl(id, { quality: hdQuality });
+                const media = ytdl(id, { highWaterMark: 1 << 25, quality: hdQuality });
                 // 返回媒体流                
                 const p = new Promise((res, rej) => {
                     try {
