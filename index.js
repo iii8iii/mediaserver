@@ -70,16 +70,12 @@ const init = async () => {
             // const url = 'https://www.youtube.com/watch?v=WhXefyLs-uw';
             const query = request.query;
             const id = query.a || query.v;
-            const quality = id === query.a ? "highestaudio" : "highestvideo";
+            const hdQuality = id === query.a ? "highestaudio" : "highestvideo";
             const ContentType = id == query.a ? 'audio/mp3' : 'video/mp4';
             const requestRange = request.headers.range;
-            console.log('query', query);
-            console.log('id', id);
-            console.log('quality', quality);
-            console.log('contentype', ContentType);
             try {
                 // 请求视频内容
-                const media = ytdl(id, { highWaterMark: 1 << 25, quality: quality });
+                const media = ytdl(id, { highWaterMark: 1 << 25, quality: hdQuality });
                 // 返回视频流
                 if (requestRange) {
                     const p = new Promise((res, rej) => {
