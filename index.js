@@ -24,37 +24,28 @@ const init = async () => {
                 // 请求视频内容
                 const video = ytdl(id, { highWaterMark: 1 << 25 });
                 // 返回视频流
-                if (requestRange) {
-                    const p = new Promise((res, rej) => {
-                        try {
-                            video.once('progress', (chunkLength, downloaded, total) => {
-                                res(total);
-                            })
-                        } catch (e) {
-                            rej('Opoos')
-                        }
-                    }).then(totalLength => {
-                        let range = Ammo.header(requestRange, totalLength)[0]
-                        console.log('range:', range)
-                        const start = range.from;
-                        const end = range.to;
-                        const stream = new Ammo.Clip(range)
-                        video.pipe(stream)
-                        return h
-                            .response(stream)
-                            .code(206)
-                            .header('Content-Range', 'bytes ' + start + '-' + end + '/' + totalLength)
-                            .header('Content-Length', start == end ? 0 : (end - start + 1))
-                            .header('Content-Type', 'video/mp4')
-                            .header('Accept-Ranges', 'bytes')
-                    }).catch(e => { return e; })
 
-                    return p;
-                } else {
+                return new Promise((res, rej) => {
+                    video.once('progress', (chunkLength, downloaded, total) => {
+                        res(total);
+                    })
+                }).then(totalLength => {
+                    let range = Ammo.header(requestRange, totalLength)[0]
+                    console.log('range:', range)
+                    const start = range.from;
+                    const end = range.to;
+                    const stream = new Ammo.Clip(range)
+                    video.pipe(stream)
                     return h
-                        .response(video)
+                        .response(stream)
+                        .code(206)
+                        .header('Content-Range', 'bytes ' + start + '-' + end + '/' + totalLength)
+                        .header('Content-Length', start == end ? 0 : (end - start + 1))
                         .header('Content-Type', 'video/mp4')
-                }
+                        .header('Accept-Ranges', 'bytes')
+                })
+
+
             } catch (e) {
                 return 'Opoos Something went wrong';
             }
@@ -85,9 +76,9 @@ const init = async () => {
                         rej('Opoos')
                     }
                 }).then(totalLength => {
-                    const requestRange = request.headers.range || 'bytes=1-1024000';
+                    const requestRange = request.headers.range;
                     let range = Ammo.header(requestRange, totalLength)[0]
-                    console.log('range',range);
+                    console.log('range', range);
                     const start = range.from;
                     const end = range.to;
                     const stream = new Ammo.Clip(range)
