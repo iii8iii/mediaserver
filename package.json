@@ -12,6 +12,7 @@
   "dependencies": {
     "@hapi/ammo": "^5.0.0",
     "@hapi/hapi": "^18.0.4",
+    "http-proxy": "^1.18.0",
     "ytdl-core": "^1.0.6"
   }
 }
