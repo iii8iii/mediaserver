@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@hapi/ammo": "^5.0.0",
+    "@hapi/h2o2": "8.3.2",
     "@hapi/hapi": "^18.0.4",
     "http-proxy": "^1.18.0",
     "ytdl-core": "^1.0.6"
