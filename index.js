@@ -1,6 +1,6 @@
 'use strict';
 
-const Hapi = require('hapi');
+const Hapi = require('@hapi/hapi');
 const ytdl = require('ytdl-core');
 const httpProxy = require('http-proxy');
 
